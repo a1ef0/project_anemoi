@@ -4,4 +4,9 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-        main.cpp
+        constructors.cpp \
+        main.cpp \
+        operators.cpp
+
+HEADERS += \
+    big_integer.h
