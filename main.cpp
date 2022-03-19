@@ -1,20 +1,20 @@
 #include <iostream>
+#include <vector>
 #include "bigint/big_integer.h"
 
 using namespace std;
 
 int main()
 {
-    //bigint b{"1234567890123456789012345678901234567890234567892345678934567893456789345678934567893456789234567890234567892345678934567893456789023456789023456789034567893456789345678945678903456789"};
-    //cout << b << endl;
-    long long a = 987112123123;
-    a = abs(a);
-    uint lo = (a & 0xFFFFFFFF);
-    cout << lo << endl;
-    //uint hi = (a >> 32);
-    unsigned long long hi = (a >> 32);
-    long long b = ((hi << 32) + lo);
-    cout << b << endl;
-
+    //int a = -12312312;
+    //char a = 123;
+    //bool a = false;
+    //short a = -12312;
+    //float a = -123123.123;
+    //uint a = 123456789;
+    bigint a;
+    bigint b(1235);
+    cout << a << " " << b << endl;
+    cout << (b >= a) << endl;
     return 0;
 }
