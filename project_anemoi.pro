@@ -10,5 +10,5 @@ SOURCES += \
         bigint/operators.cpp
 
 HEADERS += \
-    bigint/big_integer.h \
+    bigint/bigint.h \
     bigint/functions.h

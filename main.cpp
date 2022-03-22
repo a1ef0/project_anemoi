@@ -1,6 +1,5 @@
 #include <iostream>
-#include <vector>
-#include "bigint/big_integer.h"
+#include "bigint/bigint.h"
 
 using namespace std;
 
@@ -12,9 +11,8 @@ int main()
     //short a = -12312;
     //float a = -123123.123;
     //uint a = 123456789;
-    bigint a;
-    bigint b(1235);
-    cout << a << " " << b << endl;
-    cout << (b >= a) << endl;
+    bigint a = 123;
+    bigint b = -253;
+    cout << a+(b) << endl;
     return 0;
 }
