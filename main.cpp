@@ -13,6 +13,7 @@ int main()
     //uint a = 123456789;
     bigint a = 124;
     bigint b = 253;
-    cout << -(b++) << endl;
+    a -= b;
+    cout << a << endl;
     return 0;
 }

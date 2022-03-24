@@ -30,6 +30,8 @@ public:
     friend bigint operator-(const bigint&, const bigint&);
     friend bigint operator-(const bigint&);
     friend bigint operator+(const bigint&);
+    bigint operator+=(const bigint&);
+    bigint operator-=(const bigint&);
     bigint& operator=(const bigint&);
     bigint& operator++();
     bigint operator++(int);

@@ -200,3 +200,13 @@ bigint bigint::operator--(int){
     --*this;
     return tmp;
 }
+
+bigint bigint::operator+=(const bigint& term){
+    *this = *this + term;
+    return *this;
+}
+
+bigint bigint::operator-=(const bigint& term){
+    *this = *this - term;
+    return *this;
+}
