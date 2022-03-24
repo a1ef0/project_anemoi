@@ -6,8 +6,8 @@ CONFIG -= qt
 SOURCES += \
         bigint/constructors.cpp \
         bigint/functions.cpp \
-        main.cpp \
-        bigint/operators.cpp
+        bigint/operators.cpp \
+        main.cpp
 
 HEADERS += \
     bigint/bigint.h \

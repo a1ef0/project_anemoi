@@ -1,6 +1,6 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
-
+#pragma once
 #include "bigint.h"
 template <typename T>
 signed sgn(T& src) {
@@ -20,7 +20,8 @@ T abs(T src){
     return src;
 }
 
-std::vector<uint> pad(std::vector<uint>& src, int n);
-std::vector<uint> unpad(std::vector<uint>& src, int min_size);
+std::vector<uint> pad(const std::vector<uint>& src, int n);
+
+std::vector<uint> unpad(const std::vector<uint>& src, int min_size);
 
 #endif // FUNCTIONS_H

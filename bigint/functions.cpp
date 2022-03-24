@@ -1,6 +1,6 @@
 #include "functions.h"
 
-std::vector<uint> pad(std::vector<uint>& src, int n){
+std::vector<uint> pad(const std::vector<uint>& src, int n){
     std::vector<uint> dst(n, 0);
     for (int i = 0; i < src.size(); ++i){
         dst.push_back(src[i]);
@@ -8,7 +8,7 @@ std::vector<uint> pad(std::vector<uint>& src, int n){
     return dst;
 }
 
-std::vector<uint> unpad(std::vector<uint>& src, int min_size){
+std::vector<uint> unpad(const std::vector<uint>& src, int min_size){
     int current_size = src.size();
     int first_nonzero = 0;
     std::vector<uint> dst;
@@ -23,3 +23,4 @@ std::vector<uint> unpad(std::vector<uint>& src, int min_size){
     }
     return dst;
 }
+

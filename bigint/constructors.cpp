@@ -1,5 +1,4 @@
 #include "functions.h"
-#include "bigint.h"
 
 bigint::bigint(signed sign, std::vector<uint> number, int current_size){
     _sign = sign;
@@ -15,8 +14,8 @@ bigint::bigint(){
 
 bigint::bigint(long long src) : bigint(){
     _sign = sgn(src);
-    _number[DEFAULT_SIZE - 1] = abs(src) & 0xffffffff;
-    _number[DEFAULT_SIZE - 2] = (abs(src) >> 32);
+    _number[DEFAULT_SIZE - 1] = std::abs(src) & 0xffffffff;
+    _number[DEFAULT_SIZE - 2] = (std::abs(src) >> 32);
 }
 
 bigint::bigint(const bigint& src){

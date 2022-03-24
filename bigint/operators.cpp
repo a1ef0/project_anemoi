@@ -91,12 +91,12 @@ inline std::vector<uint> _add(const std::vector<uint>& first, const std::vector<
     return result;
 }
 
-inline std::vector<uint> sub(const std::vector<uint>& first, const std::vector<uint>& second, int& current_size, int min_size){
+inline std::vector<uint> _sub(const std::vector<uint>& first, const std::vector<uint>& second, int& current_size, int min_size){
     std::vector<uint> result(current_size);
     std::vector<uint> first_t = first;
 
     for (int i = current_size - 1; i > 0; --i){
-        if (first_t[i] > second[i]){
+        if (first_t[i] >= second[i]){
             result[i] = first_t[i] - second[i];
         }
         else {
@@ -111,48 +111,92 @@ inline std::vector<uint> sub(const std::vector<uint>& first, const std::vector<u
 
 bigint operator+(const bigint& first, const bigint& second){
     int current_size = std::max(first._current_size, second._current_size);
-    int min_size = std::min(first._current_size, second._current_size);
+    //int min_size = std::min(first._current_size, second._current_size);
     std::vector<uint> result;
+
     if (first == 0){
         return second;
     }
     else if (second == 0){
         return first;
     }
-    if (first._current_size == second._current_size){
-        if (first > 0 && second > 0){
-            result = _add(first._number, second._number, current_size);
+
+    int pad_first = (second._current_size - first._current_size) * (second._current_size - first._current_size > 0);
+    int pad_second = (first._current_size - second._current_size) * (first._current_size - second._current_size > 0);
+
+    bigint first_t = bigint(first._sign,
+                            pad(first._number, pad_first),
+                            second._current_size);
+
+    bigint second_t = bigint(second._sign,
+                             pad(second._number, pad_second),
+                             first._current_size);
+
+    if (first_t > 0 && second_t > 0){
+        result = _add(first_t._number, second_t._number, current_size);
+        return bigint(1, result, current_size);
+    }
+    if (first_t > 0 && second_t < 0){
+        if (abs(first_t) == abs(second_t)){
+            return bigint(0);
+        }
+        if (abs(first_t) > abs(second_t)){
+            result = _sub(first_t._number, second_t._number, current_size, first_t.DEFAULT_SIZE);
             return bigint(1, result, current_size);
         }
-        if (first > 0 && second < 0){
-            if (abs(first) == abs(second)){
-                return bigint(0);
-            }
-            if (abs(first) > abs(second)){
-                result = sub(first._number, second._number, current_size, first.DEFAULT_SIZE);
-                return bigint(1, result, current_size);
-            }
-            else if (abs(first) < abs(second)){
-                result = sub(second._number, first._number, current_size, first.DEFAULT_SIZE);
-                return bigint(-1, result, current_size);
-            }
-        }
-        if (first < 0 && second > 0){
-            if (abs(first) == abs(second)){
-                return bigint(0);
-            }
-            if (abs(first) > abs(second)){
-                result = sub(first._number, second._number, current_size, first.DEFAULT_SIZE);
-                return bigint(-1, result, current_size);
-            }
-            if (abs(first) < abs(second)){
-                result = sub(second._number, first._number, current_size, first.DEFAULT_SIZE);
-                return bigint(1, result, current_size);
-            }
-        }
-        else {
-            result = _add(first._number, second._number, current_size);
+        else if (abs(first_t) < abs(second_t)){
+            result = _sub(second_t._number, first_t._number, current_size, first_t.DEFAULT_SIZE);
             return bigint(-1, result, current_size);
         }
     }
+    if (first_t < 0 && second_t > 0){
+        if (abs(first_t) == abs(second_t)){
+            return bigint(0);
+        }
+        if (abs(first_t) > abs(second_t)){
+            result = _sub(first_t._number, second_t._number, current_size, first_t.DEFAULT_SIZE);
+            return bigint(-1, result, current_size);
+        }
+        if (abs(first_t) < abs(second_t)){
+            result = _sub(second_t._number, first_t._number, current_size, first_t.DEFAULT_SIZE);
+            return bigint(1, result, current_size);
+        }
+    }
+    else {
+        result = _add(first_t._number, second_t._number, current_size);
+        return bigint(-1, result, current_size);
+    }
+}
+
+bigint operator-(const bigint& first, const bigint& second){
+    return first + (-second);
+}
+
+bigint& bigint::operator=(const bigint& src){
+    this->_sign = src._sign;
+    this->_number = src._number;
+    this->_current_size = src._current_size;
+    return *this;
+}
+
+bigint& bigint::operator++(){
+    *this = *this + 1;
+    return *this;
+}
+
+bigint bigint::operator++(int){
+    bigint tmp = *this;
+    ++*this;
+    return tmp;
+}
+
+bigint& bigint::operator--(){
+    *this = *this - 1;
+    return *this;
+}
+
+bigint bigint::operator--(int){
+    bigint tmp = *this;
+    --*this;
+    return tmp;
 }
