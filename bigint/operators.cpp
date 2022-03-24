@@ -166,6 +166,8 @@ bigint operator+(const bigint& first, const bigint& second){
         result = _add(first_t._number, second_t._number, current_size);
         return bigint(-1, result, current_size);
     }
+    //it should not reach this statement
+    return -1;
 }
 
 bigint operator-(const bigint& first, const bigint& second){
@@ -210,3 +212,11 @@ bigint bigint::operator-=(const bigint& term){
     *this = *this - term;
     return *this;
 }
+
+bigint operator*(const bigint& first, const bigint& second){
+    if (first == 0 || second == 0){
+        return 0;
+    }
+
+}
+
