@@ -3,7 +3,7 @@
 #pragma once
 #include "bigint.h"
 template <typename T>
-signed sgn(T& src) {
+signed sgn(T src) {
     return (T(0) < src) - (src < T(0));
 }
 /*

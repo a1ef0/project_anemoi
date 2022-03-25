@@ -214,8 +214,26 @@ bigint bigint::operator-=(const bigint& term){
 }
 
 bigint operator*(const bigint& first, const bigint& second){
+    signed sign = sgn(first._sign * second._sign);
+    int current_size = first._current_size + second._current_size;
+    std::vector<uint> result(current_size);
     if (first == 0 || second == 0){
-        return 0;
+        return bigint(0);
+    }
+    if (first == 1){
+        return second;
+    }
+    if (second == 1){
+        return first;
+    }
+    size_t tmp_t, carry;
+    uint tmp;
+
+    for (int i = first._current_size; i > 0; --i){
+        for (int j = second._current_size; j > 0; --j){
+            uint cur = first._number[i];
+
+        }
     }
 
 }
