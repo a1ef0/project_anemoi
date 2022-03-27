@@ -11,9 +11,9 @@ int main()
     //short a = -12312;
     //float a = -123123.123;
     //uint a = 123456789;
-    bigint a = 124;
-    bigint b = 253;
-    a -= b;
-    cout << a << endl;
+    bigint a = 214748323452345648;
+    bigint b = 1231232345234123123;
+
+    cout << a << ' ' << b << ' ' << a*b << endl;
     return 0;
 }

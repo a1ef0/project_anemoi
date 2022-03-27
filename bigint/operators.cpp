@@ -213,10 +213,27 @@ bigint bigint::operator-=(const bigint& term){
     return *this;
 }
 
+void _add_carry(std::vector<uint>& number, uint carry, int idx){
+    std::vector<uint> carry_number(number.size());
+    uint tmp = 0;
+    size_t tmp_t = 0;
+    for (int i = idx; i > 0; --i){
+        tmp = number[i] + carry;
+        tmp_t = (size_t) number[i] + carry;
+        number[i] = tmp;
+        carry = tmp_t - tmp;
+    }
+    if (carry > 0){
+        number = pad(number, 1);
+        number[0] = carry;
+    }
+}
+
 bigint operator*(const bigint& first, const bigint& second){
     signed sign = sgn(first._sign * second._sign);
-    int current_size = first._current_size + second._current_size;
-    std::vector<uint> result(current_size);
+    int current_size = first._current_size + second._current_size + 2;
+    std::vector<uint> result(current_size, 0);
+    uint log = (first._base_log + 1);
     if (first == 0 || second == 0){
         return bigint(0);
     }
@@ -226,15 +243,19 @@ bigint operator*(const bigint& first, const bigint& second){
     if (second == 1){
         return first;
     }
-    size_t tmp_t, carry;
-    uint tmp;
-
-    for (int i = first._current_size; i > 0; --i){
-        for (int j = second._current_size; j > 0; --j){
-            uint cur = first._number[i];
-
+    size_t carry;
+    uint lo, hi;
+    for (int i = first._current_size - 1, ii = 0; i >= 0; --i, ++ii){
+        uint cur = first._number[i];
+        for (int j = second._current_size - 1, jj = 0; j >= 0; --j, ++jj){
+            lo = cur * second._number[j];
+            hi = (((size_t) cur * second._number[j]) >> log);
+            uint tmp = result[current_size - ii - jj - 1];
+            result[current_size - ii - jj - 1] = tmp + lo;
+            carry = (((size_t) tmp + lo) >> log) + hi;
+            _add_carry(result, carry, current_size - ii - jj - 2);
         }
     }
-
+    return bigint(sign, result, current_size);
 }
 
