@@ -1,6 +1,6 @@
 #include "bigint.h"
 #include "functions.h"
-
+#include <iomanip>
 std::ostream& operator <<(std::ostream& output, const bigint& src) {
     if (src._sign == 0){
         output << "0x0";
@@ -12,7 +12,8 @@ std::ostream& operator <<(std::ostream& output, const bigint& src) {
     output << "0x";
     for (int i = 0; i < src._current_size; ++i){
         if (src._number[i] != 0 || i == src._current_size - 1){
-            output << std::hex << src._number[i];
+            output << std::setfill('0') << std::setw(8)
+                   << std::hex << src._number[i] << ' ';
         }
     }
     return output;
@@ -256,6 +257,42 @@ bigint operator*(const bigint& first, const bigint& second){
             _add_carry(result, carry, current_size - ii - jj - 2);
         }
     }
-    return bigint(sign, result, current_size);
+    result = unpad(result, first.DEFAULT_SIZE);
+    return bigint(sign, result, result.size());
 }
 
+bigint bigint::operator*=(const bigint& second){
+    *this = *this * second;
+    return *this;
+}
+
+bigint operator/(const bigint& first, const bigint& second){
+    bigint first_t = abs(first);
+    bigint second_t = abs(second);
+    if (first == 0){
+        return bigint(0);
+    }
+    if (second == 0){
+        throw std::runtime_error("division by zero");
+    }
+    if (first < second){
+        return bigint(0);
+    }
+    signed sign = sgn(first._sign * second._sign);
+    uint base = first._base;
+    bigint divident, quotient;
+    for (int i = 0; i < first._current_size; ++i){
+        divident = divident * first.__base + first._number[i];
+        //TODO: make it bs, not iterative
+        uint be;
+        for (be = 0; be < base; ++be){
+            bigint tmp = divident - second * be;
+            if (tmp < 0 || tmp > second){
+                break;
+            }
+        }
+        quotient = quotient * first.__base + be;
+    }
+    quotient._sign = sign;
+    return quotient;
+}
