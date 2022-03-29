@@ -1,9 +1,9 @@
 #include "bigint.h"
-#include "functions.h"
+#include "auxillary.h"
 #include <iomanip>
 std::ostream& operator <<(std::ostream& output, const bigint& src) {
     if (src._sign == 0){
-        output << "0x0";
+        output << "0x";
         return output;
     }
     else if (src._sign == -1){
@@ -13,7 +13,7 @@ std::ostream& operator <<(std::ostream& output, const bigint& src) {
     for (int i = 0; i < src._current_size; ++i){
         if (src._number[i] != 0 || i == src._current_size - 1){
             output << std::setfill('0') << std::setw(8)
-                   << std::hex << src._number[i] << ' ';
+                   << std::hex << src._number[i];
         }
     }
     return output;
@@ -64,9 +64,9 @@ bool operator<(const bigint& first, const bigint& second){
 bool operator>(const bigint& first, const bigint& second){
     return (first >= second && first != second);
 }
-//TODO: __add here correct constructor for std::string
+
 bigint operator ""_bi(const char* src){
-    return bigint(0);
+    return bigint(std::string(src));
 }
 
 bigint operator-(const bigint& first){
@@ -81,7 +81,7 @@ inline std::vector<uint> _add(const std::vector<uint>& first, const std::vector<
     std::vector<uint> result(current_size);
     uint tmp = 0;
     size_t tmp_t = 0, carry = 0;
-    for (int i = current_size - 1; i > 0; --i){
+    for (int i = current_size - 1; i >= 0; --i){
         tmp = first[i] + second[i] + carry;
         tmp_t = first[i] + second[i] + carry;
         result[i] = tmp;
@@ -145,11 +145,11 @@ bigint operator+(const bigint& first, const bigint& second){
             return bigint(0);
         }
         if (abs(first_t) > abs(second_t)){
-            result = _sub(first_t._number, second_t._number, current_size, first_t.DEFAULT_SIZE);
+            result = _sub(first_t._number, second_t._number, current_size, bigint::DEFAULT_SIZE);
             return bigint(1, result, current_size);
         }
         else if (abs(first_t) < abs(second_t)){
-            result = _sub(second_t._number, first_t._number, current_size, first_t.DEFAULT_SIZE);
+            result = _sub(second_t._number, first_t._number, current_size, bigint::DEFAULT_SIZE);
             return bigint(-1, result, current_size);
         }
     }
@@ -158,11 +158,11 @@ bigint operator+(const bigint& first, const bigint& second){
             return bigint(0);
         }
         if (abs(first_t) > abs(second_t)){
-            result = _sub(first_t._number, second_t._number, current_size, first_t.DEFAULT_SIZE);
+            result = _sub(first_t._number, second_t._number, current_size, bigint::DEFAULT_SIZE);
             return bigint(-1, result, current_size);
         }
         if (abs(first_t) < abs(second_t)){
-            result = _sub(second_t._number, first_t._number, current_size, first_t.DEFAULT_SIZE);
+            result = _sub(second_t._number, first_t._number, current_size, bigint::DEFAULT_SIZE);
             return bigint(1, result, current_size);
         }
     }
@@ -237,7 +237,7 @@ bigint operator*(const bigint& first, const bigint& second){
     signed sign = sgn(first._sign * second._sign);
     int current_size = first._current_size + second._current_size + 2;
     std::vector<uint> result(current_size, 0);
-    uint log = (first._base_log + 1);
+    uint log = (bigint::_base_log + 1);
     if (first == 0 || second == 0){
         return bigint(0);
     }
@@ -260,7 +260,7 @@ bigint operator*(const bigint& first, const bigint& second){
             _add_carry(result, carry, current_size - ii - jj - 2);
         }
     }
-    result = unpad(result, first.DEFAULT_SIZE);
+    result = unpad(result, bigint::DEFAULT_SIZE);
     return bigint(sign, result, result.size());
 }
 
@@ -284,7 +284,7 @@ bigint operator/(const bigint& first, const bigint& second){
     signed sign = sgn(first._sign * second._sign);
     bigint divident, quotient, tmp;
     for (int i = 0; i < first._current_size; ++i){
-        divident = divident * first.__base + first._number[i];
+        divident = divident * bigint::__base + first._number[i];
         uint lo = 0, hi = uint(-1);
         uint be = hi / 2;
         tmp = divident - second * be;
@@ -298,7 +298,7 @@ bigint operator/(const bigint& first, const bigint& second){
             be = lo + (hi - lo)/2;
             tmp = divident - second * be;
         }
-        quotient = quotient * first.__base + be;
+        quotient = quotient * bigint::__base + be;
         divident = tmp;
     }
     quotient._sign = sign;

@@ -8,10 +8,10 @@ class bigint{
 private:
     signed _sign;
     std::vector<uint> _number;
-    const uint _base = (1 << 31);
-    const size_t __base = (size_t) 1 << 32;
-    const int _base_log = 31;
-    const int DEFAULT_SIZE = 16;
+    static const uint _base = (1 << 31);
+    static const size_t __base = (size_t) 1 << 32;
+    static const int _base_log = 31;
+    static const int DEFAULT_SIZE = 2;
     int _current_size;
     bigint(signed sign, std::vector<uint> number, int current_size);
 public:

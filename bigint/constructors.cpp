@@ -1,4 +1,4 @@
-#include "functions.h"
+#include "auxillary.h"
 
 bigint::bigint(signed sign, std::vector<uint> number, int current_size){
     _sign = sign;
@@ -30,4 +30,12 @@ bigint::bigint(bigint&& src){
     _current_size = src._current_size;
 }
 
-//TODO: add here std::string constructor (available only after % and / operators made)
+bigint::bigint(const std::string& src) : bigint(){
+    int cur = 0, size = src.size();
+    const char* src_ = src.c_str();
+    while (cur < size){
+        *this *= 10;
+        *this = *this + (src_[cur] - 48);
+        cur++;
+    }
+}

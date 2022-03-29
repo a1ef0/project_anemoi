@@ -1,27 +1,12 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
-#pragma once
 #include "bigint.h"
-template <typename T>
-signed sgn(T src) {
-    return (T(0) < src) - (src < T(0));
-}
-/*
-template <typename T>
-T abs(T src){
-    return (1 - 2*(src < 0)) * src;
-}
-*/
-template <typename T>
-T abs(T src){
-    if (src < 0){
-        return -src;
-    }
-    return src;
-}
 
-std::vector<uint> pad(const std::vector<uint>& src, int n);
+namespace biginteger {
 
-std::vector<uint> unpad(const std::vector<uint>& src, int min_size);
-
+    bigint pow(bigint, bigint);
+    bigint pow(bigint, bigint, bigint);
+    bigint gcd(bigint, bigint);
+    bool miller_rabin(bigint&, bigint&);
+}
 #endif // FUNCTIONS_H
