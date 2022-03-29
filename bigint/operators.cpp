@@ -27,6 +27,9 @@ bool operator>=(const bigint& first, const bigint& second){
         return true;
     }
     for (int i = 0; i < first._current_size; ++i){
+        if (first._number[i] > second._number[i]){
+            return true;
+        }
         if (first._number[i] < second._number[i]){
             return false;
         }
@@ -102,7 +105,7 @@ inline std::vector<uint> _sub(const std::vector<uint>& first, const std::vector<
         }
         else {
             first_t[i-1]--;
-            result[i] = (1 << 31) - second[i] + first_t[i];
+            result[i] = uint(-1) - second[i] + first_t[i] + 1;
         }
     }
     result = unpad(result, min_size);
@@ -279,20 +282,40 @@ bigint operator/(const bigint& first, const bigint& second){
         return bigint(0);
     }
     signed sign = sgn(first._sign * second._sign);
-    uint base = first._base;
-    bigint divident, quotient;
+    bigint divident, quotient, tmp;
     for (int i = 0; i < first._current_size; ++i){
         divident = divident * first.__base + first._number[i];
-        //TODO: make it bs, not iterative
-        uint be;
-        for (be = 0; be < base; ++be){
-            bigint tmp = divident - second * be;
-            if (tmp < 0 || tmp > second){
-                break;
+        uint lo = 0, hi = uint(-1);
+        uint be = hi / 2;
+        tmp = divident - second * be;
+        while ((tmp < 0 || tmp >= second) && hi - lo != 1){
+            if (tmp < 0){
+                hi = be;
             }
+            else {
+                lo = be;
+            }
+            be = lo + (hi - lo)/2;
+            tmp = divident - second * be;
         }
         quotient = quotient * first.__base + be;
+        divident = tmp;
     }
     quotient._sign = sign;
     return quotient;
+}
+
+bigint bigint::operator/=(const bigint& second){
+    *this = *this / second;
+    return *this;
+}
+
+bigint bigint::operator%(const bigint & second){
+    bigint tmp = (*this / second) * second;
+    return *this - tmp;
+}
+
+bigint bigint::operator%=(const bigint& second){
+    *this = *this % second;
+    return *this;
 }
