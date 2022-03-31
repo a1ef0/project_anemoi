@@ -1,5 +1,5 @@
 #include "functions.h"
-#include "auxillary.h"
+#include "auxiliary.h"
 
 bigint biginteger::gcd(bigint a, bigint b){
     while (a != 0 && b != 0){

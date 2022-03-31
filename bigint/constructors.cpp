@@ -1,4 +1,4 @@
-#include "auxillary.h"
+#include "auxiliary.h"
 
 bigint::bigint(signed sign, std::vector<uint> number, int current_size){
     _sign = sign;

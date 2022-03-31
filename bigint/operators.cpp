@@ -1,5 +1,5 @@
 #include "bigint.h"
-#include "auxillary.h"
+#include "auxiliary.h"
 #include <iomanip>
 std::ostream& operator <<(std::ostream& output, const bigint& src) {
     if (src._sign == 0){

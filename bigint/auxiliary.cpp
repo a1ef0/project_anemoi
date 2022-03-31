@@ -1,4 +1,4 @@
-#include "auxillary.h"
+#include "auxiliary.h"
 
 std::vector<uint> pad(const std::vector<uint>& src, int n){
     std::vector<uint> dst(n, 0);

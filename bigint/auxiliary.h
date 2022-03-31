@@ -1,5 +1,5 @@
-#ifndef AUXILLARY_H
-#define AUXILLARY_H
+#ifndef AUXILIARY_H
+#define AUXILIARY_H
 #include "bigint.h"
 template <typename T>
 signed sgn(T src) {
@@ -18,4 +18,4 @@ std::vector<uint> pad(const std::vector<uint>&, int);
 
 std::vector<uint> unpad(const std::vector<uint>&, int);
 
-#endif // AUXILLARY_H
+#endif // AUXILIARY_H
