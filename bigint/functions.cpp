@@ -73,5 +73,4 @@ bool biginteger::miller_rabin(bigint& n, bigint& a){
         }
         return false;
     }
-    return false;
 }
