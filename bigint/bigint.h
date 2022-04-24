@@ -1,6 +1,6 @@
 #ifndef BIGINT_H
 #define BIGINT_H
-//TODO: make _base, _base_log and DEFAULT_SIZE static not to confuse myself and others
+
 #include <iostream>
 #include <vector>
 
