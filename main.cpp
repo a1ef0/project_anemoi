@@ -7,7 +7,7 @@ using namespace biginteger;
 int main()
 {
     bigint a = 2;
-    bigint b = pow(a, 3456798765434567897_bi);
+    bigint b = pow(a, 1120000);
     cout << b << endl;
     return 0;
 }

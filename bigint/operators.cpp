@@ -170,7 +170,6 @@ bigint operator+(const bigint& first, const bigint& second){
         result = _add(first_t._number, second_t._number, current_size);
         return bigint(-1, result, current_size);
     }
-    //it should not reach this statement
     return -1;
 }
 
@@ -232,7 +231,11 @@ void _add_carry(std::vector<uint>& number, uint carry, int idx){
         number[0] = carry;
     }
 }
-
+/*
+ * For now, let it keep as it is. For cryptographic purposes, we do not use any
+ * huge numbers (1e500 and bigger), I geuss. If I have any performance issues, I will
+ * implement Karatsuba algorithm. But for now, I do not want any additional pain in the ass.
+ */
 bigint operator*(const bigint& first, const bigint& second){
     signed sign = sgn(first._sign * second._sign);
     int current_size = first._current_size + second._current_size + 2;
