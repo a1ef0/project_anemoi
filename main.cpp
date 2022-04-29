@@ -4,10 +4,10 @@
 using namespace std;
 using namespace biginteger;
 
-int main()
-{
+int main() {
     bigint a = 2;
-    bigint b = pow(a, 1120000);
-    cout << b << endl;
+    //bigint b = pow(a, 112045678987654678912342837469827634897321340_bi, 213124123_bi);
+    //cout << b << endl;
+    cout << random(a) << endl;
     return 0;
 }

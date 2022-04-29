@@ -1,7 +1,9 @@
 #include "functions.h"
 #include "auxiliary.h"
 
-bigint biginteger::gcd(bigint a, bigint b){
+#include <random>
+
+bigint biginteger::gcd(bigint a, bigint b) {
     while (a != 0 && b != 0){
         if (a > b){
             a = a % b;
@@ -13,7 +15,7 @@ bigint biginteger::gcd(bigint a, bigint b){
     return a+b;
 }
 
-bigint biginteger::pow(bigint base, bigint exp){
+bigint biginteger::pow(bigint base, bigint exp) {
     bigint result = 1;
     while (exp > 0){
         if (exp % 2 == 1){
@@ -25,7 +27,7 @@ bigint biginteger::pow(bigint base, bigint exp){
     return result;
 }
 
-bigint biginteger::pow(bigint base, bigint exp, bigint mod){
+bigint biginteger::pow(bigint base, bigint exp, bigint mod) {
     bigint result = 1;
     if (base < 0){
         throw std::runtime_error("cannot pow negative number");
@@ -46,7 +48,7 @@ bigint biginteger::pow(bigint base, bigint exp, bigint mod){
     return result % mod;
 }
 
-bool biginteger::miller_rabin(bigint& n, bigint& a){
+bool biginteger::miller_rabin(bigint& n, bigint& a) {
     if (n % 2 == 0 || gcd(n, a) > 1){
         return false;
     }
@@ -73,4 +75,21 @@ bool biginteger::miller_rabin(bigint& n, bigint& a){
         }
         return false;
     }
+}
+
+bigint biginteger::factorial(bigint& n) {
+    bigint res = 1;
+    for (bigint i = 1; i <= n; ++i){
+        res *= i;
+    }
+    return res;
+}
+
+bigint biginteger::random(size_t bits) {
+    bigint result;
+    std::random_device engine;
+    uint residue = bits % (sizeof(size_t));
+    uint size_t_bits = sizeof(size_t) * 8;
+    result = engine() >> (size_t_bits - residue);
+
 }

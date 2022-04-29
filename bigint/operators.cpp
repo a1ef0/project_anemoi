@@ -19,7 +19,7 @@ std::ostream& operator <<(std::ostream& output, const bigint& src) {
     return output;
 }
 
-bool operator>=(const bigint& first, const bigint& second){
+bool operator>=(const bigint& first, const bigint& second) {
     if (first._sign < second._sign || first._current_size < second._current_size){
         return false;
     }
@@ -37,7 +37,7 @@ bool operator>=(const bigint& first, const bigint& second){
     return true;
 }
 
-bool operator==(const bigint& first, const bigint& second){
+bool operator==(const bigint& first, const bigint& second) {
     if (first._sign != second._sign || first._current_size != second._current_size){
         return false;
     }
@@ -49,35 +49,35 @@ bool operator==(const bigint& first, const bigint& second){
     return true;
 }
 
-bool operator!=(const bigint& first, const bigint& second){
+bool operator!=(const bigint& first, const bigint& second) {
     return !(first == second);
 }
 
-bool operator<=(const bigint& first, const bigint& second){
+bool operator<=(const bigint& first, const bigint& second) {
     return (!(first >= second) || first == second);
 }
 
-bool operator<(const bigint& first, const bigint& second){
+bool operator<(const bigint& first, const bigint& second) {
     return !(first >= second);
 }
 
-bool operator>(const bigint& first, const bigint& second){
+bool operator>(const bigint& first, const bigint& second) {
     return (first >= second && first != second);
 }
 
-bigint operator ""_bi(const char* src){
+bigint operator ""_bi(const char* src) {
     return bigint(std::string(src));
 }
 
-bigint operator-(const bigint& first){
+bigint operator-(const bigint& first) {
     return bigint(-first._sign, first._number, first._current_size);
 }
 
-bigint operator+(const bigint& first){
+bigint operator+(const bigint& first) {
     return first;
 }
 
-inline std::vector<uint> _add(const std::vector<uint>& first, const std::vector<uint>& second, int& current_size){
+inline std::vector<uint> _add(const std::vector<uint>& first, const std::vector<uint>& second, int& current_size) {
     std::vector<uint> result(current_size);
     uint tmp = 0;
     size_t tmp_t = 0, carry = 0;
@@ -95,7 +95,7 @@ inline std::vector<uint> _add(const std::vector<uint>& first, const std::vector<
     return result;
 }
 
-inline std::vector<uint> _sub(const std::vector<uint>& first, const std::vector<uint>& second, int& current_size, int min_size){
+inline std::vector<uint> _sub(const std::vector<uint>& first, const std::vector<uint>& second, int& current_size, int min_size) {
     std::vector<uint> result(current_size);
     std::vector<uint> first_t = first;
 
@@ -113,7 +113,7 @@ inline std::vector<uint> _sub(const std::vector<uint>& first, const std::vector<
     return result;
 }
 
-bigint operator+(const bigint& first, const bigint& second){
+bigint operator+(const bigint& first, const bigint& second) {
     int current_size = std::max(first._current_size, second._current_size);
     //int min_size = std::min(first._current_size, second._current_size);
     std::vector<uint> result;
