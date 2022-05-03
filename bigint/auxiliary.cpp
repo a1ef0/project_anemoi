@@ -36,5 +36,5 @@ bigint mul_mod(const bigint& first, const bigint& second, const bigint& modulo) 
         y = (y * 2) % modulo;
         _second = _second / 2;
     }
-    return x % modulo;
+    return std::move(x % modulo);
 }

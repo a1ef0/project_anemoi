@@ -34,7 +34,7 @@ std::ostream& operator <<(std::ostream& output, const bigint& src) {
     std::string result;
     bigint _src = src;
     while (_src != 0) {
-        result = result + char((_src % 10)._number[bigint::DEFAULT_SIZE -1] + 48);
+        result = char((_src % 10)._number[bigint::DEFAULT_SIZE -1] + 48) + result;
         _src /= 10;
     }
     output << result;
@@ -383,4 +383,8 @@ bigint operator%(const bigint& first, const bigint& second){
 bigint bigint::operator%=(const bigint& second){
     *this = *this % second;
     return *this;
+}
+
+bool odd(const bigint& src) {
+    return src._number[src._current_size - 1] & 1;
 }

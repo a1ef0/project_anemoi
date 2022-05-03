@@ -9,8 +9,9 @@ int main() {
     for (bigint i = 2; i < 100; ++i) {
         //a = biginteger::get_prime(5);
         //cout << a << endl;
-        cout << i << ' ' << is_prime(i) << endl;
+        cout << i << ' ' << get_prime(8) << endl;
         //is_prime(i);
     }
     return 0;
 }
+//TODO: Check << ostream operator
