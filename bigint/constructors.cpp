@@ -8,7 +8,7 @@ bigint::bigint(signed sign, std::vector<uint> number, int current_size) {
 
 bigint::bigint() {
     _sign = 0;
-    _number.resize(DEFAULT_SIZE, 0);
+    _number = std::vector<uint>(DEFAULT_SIZE, 0);
     _current_size = DEFAULT_SIZE;
 }
 

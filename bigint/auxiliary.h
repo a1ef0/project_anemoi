@@ -15,7 +15,7 @@ T abs(T src){
 }
 
 std::vector<uint> pad(const std::vector<uint>&, int);
-
 std::vector<uint> unpad(const std::vector<uint>&, int);
+bigint mul_mod(const bigint&, const bigint&, const bigint&);
 
 #endif // AUXILIARY_H

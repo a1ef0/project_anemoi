@@ -4,13 +4,13 @@
 
 namespace biginteger {
 
-    bigint pow(bigint, bigint);
-    bigint pow(bigint, bigint, bigint);
-    bigint gcd(bigint, bigint);
-    bool miller_rabin(bigint&, bigint&);
-    bool is_prime(bigint&);
-    bigint factorial(bigint&);
+    bigint pow(const bigint&, const bigint&);
+    bigint pow(const bigint&, const bigint&, const bigint&);
+    bigint gcd(const bigint&, const bigint&);
+    bool miller_rabin(const bigint&, const bigint&);
+    bool is_prime(const bigint&);
+    bigint factorial(const bigint&);
     bigint random(size_t);
-
+    bigint get_prime(size_t);
 }
 #endif // FUNCTIONS_H

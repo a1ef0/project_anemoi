@@ -3,81 +3,87 @@
 
 #include <random>
 
-bigint biginteger::gcd(bigint a, bigint b) {
-    while (a != 0 && b != 0){
-        if (a > b){
-            a = a % b;
+bigint biginteger::gcd(const bigint& a, const bigint& b) {
+    bigint _a = a;
+    bigint _b = b;
+    while (_a != 0 && _b != 0){
+        if (_a > _b){
+            _a = _a % _b;
         }
         else{
-            b = b % a;
+            _b = _b % _a;
         }
     }
-    return a+b;
+    return std::move(_a + _b);
 }
 
-bigint biginteger::pow(bigint base, bigint exp) {
+bigint biginteger::pow(const bigint& base, const bigint& exp) {
     bigint result = 1;
-    while (exp > 0){
-        if (exp % 2 == 1){
-            result *= base;
+    bigint _base = base;
+    bigint _exp = exp;
+    while (_exp > 0){
+        if (_exp % 2 == 1){
+            result *= _base;
         }
-        base *= base;
-        exp /= 2;
+        _base *= _base;
+        _exp /= 2;
     }
-    return result;
+    return std::move(result);
 }
 
-bigint biginteger::pow(bigint base, bigint exp, bigint mod) {
+
+
+bigint biginteger::pow(const bigint& base, const bigint& exp, const bigint& mod) {
     bigint result = 1;
+    bigint _base = base;
+    bigint _exp = exp;
     if (base < 0){
         throw std::runtime_error("cannot pow negative number");
     }
     if (exp < 0){
-        exp = exp + base * (abs(exp) / base);
+        _exp = _exp + base * (abs(_exp) / base);
     }
     if (exp == -1){
-        exp = mod - 2;
+        _exp = mod - 2;
     }
-    while (exp > 0){
-        if (exp % 2 == 1){
-            result = (result * base) % mod;
+    while (_exp > 0){
+        if (_exp % 2 == 1){
+            result = (result * _base) % mod;
         }
-        base = (base * base) % mod;
-        exp /= 2;
+        _base = (_base * _base) % mod;
+        _exp /= 2;
     }
-    return result % mod;
+    return std::move(result % mod);
 }
 
-bool biginteger::miller_rabin(bigint& n, bigint& a) {
-    if (n % 2 == 0 || gcd(n, a) > 1){
+bool biginteger::miller_rabin(const bigint& n, const bigint& a) {
+    bigint _n = n;
+    bigint _a = a;
+    if (_n % 2 == 0){
         return false;
     }
     else {
-        bigint k = 0;
-        bigint q = n - 1;
-        while (1){
-            if (q % 2 == 0){
-                q = q / 2;
-                k++;
-            }
-            else break;
+        bigint k;
+        bigint q = _n - 1;
+        while (q % 2 == 0){
+            q = q / 2;
+            k++;
         }
-        a = biginteger::pow(a, q, n);
-
-        if (a % n == 1)
+        _a = biginteger::pow(_a, q, _n);
+        if (_a % _n == 1)
             return true;
 
         for (bigint i = 0; i < k; ++i){
-            if (a % n == n - 1){
+            if (_a % _n == _n - 1){
                 return true;
             }
-            a = biginteger::pow(a, 2, n);
+            mul_mod(_a, _a, _n);
         }
         return false;
     }
 }
 
-bigint biginteger::factorial(bigint& n) {
+bigint biginteger::factorial(const bigint& n) {
     bigint res = 1;
     for (bigint i = 1; i <= n; ++i){
         res *= i;
@@ -85,11 +91,43 @@ bigint biginteger::factorial(bigint& n) {
     return res;
 }
 
+bool biginteger::is_prime(const bigint& number) {
+    if (number < 2) {
+        return false;
+    }
+    if (number == 2) {
+        return true;
+    }
+    for (int i = 0; i < 100; ++i) {
+        if (biginteger::gcd(number, i + 10) == 1) {
+            if (biginteger::miller_rabin(number, i + 10) == false) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+//TODO: somehow remove dependency on 32, but probably it will not be needed
 bigint biginteger::random(size_t bits) {
     bigint result;
     std::random_device engine;
-    uint residue = bits % (sizeof(size_t));
-    uint size_t_bits = sizeof(size_t) * 8;
-    result = engine() >> (size_t_bits - residue);
+    size_t uint_bits = 32;
+    if (uint residue = bits % uint_bits){
+        result = uint(engine()) >> (uint_bits - residue);
+    }
+    uint digits = bits / uint_bits;
+    for (size_t i = 0; i < digits; ++i) {
+        result *= ((size_t) 1 << uint_bits);
+        result += uint(engine());
+    }
+    return result;
+}
 
+bigint biginteger::get_prime(size_t bits) {
+    bigint result = biginteger::random(bits);
+    while (!is_prime(result)) {
+        result = biginteger::random(bits);
+    }
+    return result;
 }

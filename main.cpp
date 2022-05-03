@@ -5,9 +5,12 @@ using namespace std;
 using namespace biginteger;
 
 int main() {
-    bigint a = 2;
-    //bigint b = pow(a, 112045678987654678912342837469827634897321340_bi, 213124123_bi);
-    //cout << b << endl;
-    cout << random(a) << endl;
+    bigint a;
+    for (bigint i = 2; i < 100; ++i) {
+        //a = biginteger::get_prime(5);
+        //cout << a << endl;
+        cout << i << ' ' << is_prime(i) << endl;
+        //is_prime(i);
+    }
     return 0;
 }
