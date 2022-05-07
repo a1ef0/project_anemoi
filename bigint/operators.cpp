@@ -2,26 +2,6 @@
 #include "auxiliary.h"
 #include <iomanip>
 #include <bitset>
-/*
-std::ostream& operator <<(std::ostream& output, const bigint& src) {
-    if (src._sign == 0){
-        output << "0x0";
-        return output;
-    }
-    else if (src._sign == -1){
-        output << '-';
-    }
-    output << "0x";
-    for (int i = 0; i < src._current_size; ++i){
-        if (src._number[i] != 0 || i == src._current_size - 1){
-            output << std::setfill('0') << std::setw(8)
-                   //<< std::bitset<32>(src._number[i]);
-                      << std::hex << src._number[i];
-        }
-    }
-    return output;
-}
-*/
 
 std::ostream& operator <<(std::ostream& output, const bigint& src) {
     if (src._sign == 0){
@@ -92,7 +72,7 @@ bigint operator ""_bi(const char* src) {
 }
 
 bigint operator-(const bigint& first) {
-    return std::move(bigint(-first._sign, first._number, first._current_size));
+    return bigint(-first._sign, first._number, first._current_size);
 }
 
 bigint operator+(const bigint& first) {
@@ -110,14 +90,14 @@ inline std::vector<uint> _add(const std::vector<uint>& first, const std::vector<
         carry = tmp_t - (size_t) tmp;
     }
     if (carry > 0){
-        result = pad(result, 1);
+        result = std::move(pad(result, 1));
         result[0] = carry;
         current_size++;
     }
-    return std::move(result);
+    return result;
 }
 
-inline std::vector<uint> _sub(const std::vector<uint>& first, const std::vector<uint>& second, int& current_size, int min_size) {
+std::vector<uint> _sub(const std::vector<uint>& first, const std::vector<uint>& second, int& current_size, int min_size) {
     std::vector<uint> result(current_size);
     std::vector<uint> first_t = first;
 
@@ -130,21 +110,20 @@ inline std::vector<uint> _sub(const std::vector<uint>& first, const std::vector<
             result[i] = uint(-1) - second[i] + first_t[i] + 1;
         }
     }
-    result = unpad(result, min_size);
+    result = std::move(unpad(result, min_size));
     current_size = result.size();
-    return std::move(result);
+    return result;
 }
 
 bigint operator+(const bigint& first, const bigint& second) {
     int current_size = std::max(first._current_size, second._current_size);
-    //int min_size = std::min(first._current_size, second._current_size);
     std::vector<uint> result;
 
     if (first == 0){
-        return std::move(second);
+        return second;
     }
     else if (second == 0){
-        return std::move(first);
+        return first;
     }
 
     int pad_first = (second._current_size - first._current_size) * (second._current_size - first._current_size > 0);
@@ -159,44 +138,44 @@ bigint operator+(const bigint& first, const bigint& second) {
                              first._current_size);
 
     if (first_t > 0 && second_t > 0){
-        result = _add(first_t._number, second_t._number, current_size);
-        return std::move(bigint(1, result, current_size));
+        result = std::move(_add(first_t._number, second_t._number, current_size));
+        return bigint(1, result, current_size);
     }
     if (first_t > 0 && second_t < 0){
         if (abs(first_t) == abs(second_t)){
-            return std::move(bigint(0));
+            return bigint(0);
         }
         if (abs(first_t) > abs(second_t)){
-            result = _sub(first_t._number, second_t._number, current_size, bigint::DEFAULT_SIZE);
-            return std::move(bigint(1, result, current_size));
+            result = std::move(_sub(first_t._number, second_t._number, current_size, bigint::DEFAULT_SIZE));
+            return bigint(1, result, current_size);
         }
         else if (abs(first_t) < abs(second_t)){
-            result = _sub(second_t._number, first_t._number, current_size, bigint::DEFAULT_SIZE);
-            return std::move(bigint(-1, result, current_size));
+            result = std::move(_sub(second_t._number, first_t._number, current_size, bigint::DEFAULT_SIZE));
+            return bigint(-1, result, current_size);
         }
     }
     if (first_t < 0 && second_t > 0){
         if (abs(first_t) == abs(second_t)){
-            return std::move(bigint(0));
+            return bigint(0);
         }
         if (abs(first_t) > abs(second_t)){
-            result = _sub(first_t._number, second_t._number, current_size, bigint::DEFAULT_SIZE);
-            return std::move(bigint(-1, result, current_size));
+            result = std::move(_sub(first_t._number, second_t._number, current_size, bigint::DEFAULT_SIZE));
+            return bigint(-1, result, current_size);
         }
         if (abs(first_t) < abs(second_t)){
-            result = _sub(second_t._number, first_t._number, current_size, bigint::DEFAULT_SIZE);
-            return std::move(bigint(1, result, current_size));
+            result = std::move(_sub(second_t._number, first_t._number, current_size, bigint::DEFAULT_SIZE));
+            return bigint(1, result, current_size);
         }
     }
     else {
-        result = _add(first_t._number, second_t._number, current_size);
-        return std::move(bigint(-1, result, current_size));
+        result = std::move(_add(first_t._number, second_t._number, current_size));
+        return bigint(-1, result, current_size);
     }
     return -1;
 }
 
 bigint operator-(const bigint& first, const bigint& second){
-    return std::move(first + (-second));
+    return first + (-second);
 }
 
 bigint& bigint::operator=(const bigint& src){
@@ -248,7 +227,6 @@ bigint bigint::operator-=(const bigint& term){
 }
 
 void _add_carry(std::vector<uint>& number, uint carry, int idx){
-    std::vector<uint> carry_number(number.size());
     uint tmp = 0;
     size_t tmp_t = 0;
     for (int i = idx; i > 0; --i){
@@ -258,10 +236,11 @@ void _add_carry(std::vector<uint>& number, uint carry, int idx){
         carry = tmp_t - tmp;
     }
     if (carry > 0){
-        number = pad(number, 1);
+        number = std::move(pad(number, 1));
         number[0] = carry;
     }
 }
+//TODO: all int -> size_t
 /*
  * For now, let it keep as it is. For cryptographic purposes, we do not use any
  * huge numbers (1e500 and bigger), I geuss. If I have any performance issues, I will
@@ -272,14 +251,26 @@ bigint operator*(const bigint& first, const bigint& second){
     int current_size = first._current_size + second._current_size + 2;
     std::vector<uint> result(current_size, 0);
     uint log = (bigint::_base_log + 1);
-    if (first == 0 || second == 0){
-        return bigint(0);
+    if (first == 0 || second == 0) {
+        return 0;
     }
-    if (first == 1){
+    if (first == 1) {
         return second;
     }
-    if (second == 1){
+    if (second == 1) {
         return first;
+    }
+    if (second == 2) {
+        uint bit = 0, _bit = 0;
+        bigint first_t = first;
+        for (size_t i = first_t._current_size - 1; i > 0; --i) {
+            _bit = first_t._number[i] & 0x80000000;
+            first_t._number[i] = first_t._number[i] << 1;
+            //TODO:!!!! if (i == 1)
+            first_t._number[i] = first_t._number[i] | bit;
+            bit = _bit;
+        }
+        return first_t;
     }
     size_t carry;
     uint lo, hi;
@@ -294,8 +285,8 @@ bigint operator*(const bigint& first, const bigint& second){
             _add_carry(result, carry, current_size - ii - jj - 2);
         }
     }
-    result = unpad(result, bigint::DEFAULT_SIZE);
-    return std::move(bigint(sign, result, result.size()));
+    result = std::move(unpad(result, bigint::DEFAULT_SIZE));
+    return bigint(sign, result, result.size());
 }
 
 bigint bigint::operator*=(const bigint& second){
@@ -306,6 +297,22 @@ bigint bigint::operator*=(const bigint& second){
 bigint operator/(const bigint& first, const bigint& second){
     bigint first_t = abs(first);
     bigint second_t = abs(second);
+    if (second == 2) {
+        int bit = 0;
+        for (int i = 0; i < first_t._current_size; ++i) {
+            if (i == first_t._current_size - 1) {
+                if (first_t._number[i] == 1) {
+                    first_t._number[i] = 0;
+                    first_t._sign = 0;
+                    continue;
+                }
+            }
+            first_t._number[i] = first_t._number[i] >> 1;
+            first_t._number[i] = first_t._number[i] | (bit << 31);
+            bit = first_t._number[i] & 1;
+        }
+        return first_t;
+    }
     if (first == 0){
         return bigint(0);
     }
@@ -336,7 +343,7 @@ bigint operator/(const bigint& first, const bigint& second){
         divident = remainder;
     }
     quotient._sign = sign;
-    return std::move(quotient);
+    return quotient;
 }
 
 bigint bigint::operator/=(const bigint& second){
@@ -345,11 +352,9 @@ bigint bigint::operator/=(const bigint& second){
 }
 
 bigint operator%(const bigint& first, const bigint& second){
-    /*
-    bigint tmp = (first / second) * second;
-    return std::move(first - tmp);
-    */
-
+    if (second == 2) {
+        return first._number[first._current_size - 1] & 1;
+    }
     if (first == 0){
         return bigint(0);
     }
@@ -357,7 +362,7 @@ bigint operator%(const bigint& first, const bigint& second){
         throw std::runtime_error("division by zero");
     }
     if (first < second){
-        return std::move(first);
+        return first;
     }
     bigint divident, remainder;
     for (int i = 0; i < first._current_size; ++i){
@@ -383,8 +388,4 @@ bigint operator%(const bigint& first, const bigint& second){
 bigint bigint::operator%=(const bigint& second){
     *this = *this % second;
     return *this;
-}
-
-bool odd(const bigint& src) {
-    return src._number[src._current_size - 1] & 1;
 }

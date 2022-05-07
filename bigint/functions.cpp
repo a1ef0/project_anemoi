@@ -14,7 +14,7 @@ bigint biginteger::gcd(const bigint& a, const bigint& b) {
             _b = _b % _a;
         }
     }
-    return std::move(_a + _b);
+    return _a + _b;
 }
 
 bigint biginteger::pow(const bigint& base, const bigint& exp) {
@@ -22,13 +22,13 @@ bigint biginteger::pow(const bigint& base, const bigint& exp) {
     bigint _base = base;
     bigint _exp = exp;
     while (_exp > 0){
-        if (odd(_exp)){
+        if (_exp % 2 == 1){
             result *= _base;
         }
         _base *= _base;
         _exp /= 2;
     }
-    return std::move(result);
+    return result;
 }
 
 
@@ -47,25 +47,25 @@ bigint biginteger::pow(const bigint& base, const bigint& exp, const bigint& mod)
         _exp = mod - 2;
     }
     while (_exp > 0){
-        if (odd(_exp)){
-            result = mul_mod(result, _base, mod);
+        if (_exp % 2 == 1){
+            result = std::move(mul_mod(result, _base, mod));
         }
-        _base = mul_mod(_base, _base, mod);
+        _base = std::move(mul_mod(_base, _base, mod));
         _exp /= 2;
     }
-    return std::move(result % mod);
+    return result % mod;
 }
 
 inline bool biginteger::miller_rabin(const bigint& d, const bigint& n, size_t bits) {
     bigint _d = d;
     bigint a = 2 + biginteger::random(bits) % (n - 4);
-    bigint x = pow(a, d, n);
+    bigint x = std::move(pow(a, d, n));
     if (x == 1 || x == n - 1) {
         return true;
     }
 
     while (_d != n - 1) {
-        x = mul_mod(x, x, n);
+        x = std::move(mul_mod(x, x, n));
         _d *= 2;
         if (x == 1) {
             return false;
@@ -94,7 +94,7 @@ bool biginteger::is_prime(const bigint& number, size_t k, size_t bits) {
         return true;
     }
     bigint d = number - 1;
-    while (!odd(d)) {
+    while (d % 2 == 0) {
         d /= 2;
     }
 
@@ -133,9 +133,9 @@ bigint biginteger::random() {
 
 bigint biginteger::get_prime(size_t bits) {
     bigint result = biginteger::random(bits);
+    //result += (result % 2 == 0);
     while (!is_prime(result, 50, bits)) {
         result = biginteger::random(bits);
     }
-    std::cout << is_prime(result, 50, bits) << std::endl;
     return result;
 }

@@ -3,6 +3,9 @@
 
 #include <iostream>
 #include <vector>
+//TODO: probably add bigint::Zero, bigint::One, bigint::Two
+
+using uint = unsigned int;
 
 class bigint {
 private:

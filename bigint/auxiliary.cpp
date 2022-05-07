@@ -6,7 +6,8 @@ std::vector<uint> pad(const std::vector<uint>& src, int n) {
     for (int i = 0; i < size; ++i){
         dst.push_back(src[i]);
     }
-    return std::move(dst);
+
+    return dst;
 }
 
 std::vector<uint> unpad(const std::vector<uint>& src, int min_size) {
@@ -22,7 +23,7 @@ std::vector<uint> unpad(const std::vector<uint>& src, int min_size) {
     for (int i = first_nonzero; i < current_size; ++i){
         dst.push_back(src[i]);
     }
-    return std::move(dst);
+    return dst;
 }
 
 bigint mul_mod(const bigint& first, const bigint& second, const bigint& modulo) {
@@ -36,5 +37,5 @@ bigint mul_mod(const bigint& first, const bigint& second, const bigint& modulo) 
         y = (y * 2) % modulo;
         _second = _second / 2;
     }
-    return std::move(x % modulo);
+    return x % modulo;
 }
