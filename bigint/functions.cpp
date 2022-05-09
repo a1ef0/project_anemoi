@@ -66,7 +66,7 @@ inline bool biginteger::miller_rabin(const bigint& d, const bigint& n, size_t bi
 
     while (_d != n - 1) {
         x = std::move(mul_mod(x, x, n));
-        _d *= 2;
+        _d = _d * 2;
         if (x == 1) {
             return false;
         }
@@ -133,8 +133,9 @@ bigint biginteger::random() {
 
 bigint biginteger::get_prime(size_t bits) {
     bigint result = biginteger::random(bits);
-    //result += (result % 2 == 0);
+//    result += (result % 2 == 0);
     while (!is_prime(result, 50, bits)) {
+//        result += 2;
         result = biginteger::random(bits);
     }
     return result;

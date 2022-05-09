@@ -263,12 +263,20 @@ bigint operator*(const bigint& first, const bigint& second){
     if (second == 2) {
         uint bit = 0, _bit = 0;
         bigint first_t = first;
-        for (size_t i = first_t._current_size - 1; i > 0; --i) {
-            _bit = first_t._number[i] & 0x80000000;
+        for (int i = first_t._current_size - 1; i >= 0; --i) {
+            _bit = (first_t._number[i] & 0x80000000) > 0;
             first_t._number[i] = first_t._number[i] << 1;
             //TODO:!!!! if (i == 1)
-            first_t._number[i] = first_t._number[i] | bit;
-            bit = _bit;
+            if (i != 0) {
+                first_t._number[i-1] = first_t._number[i-1] | _bit;
+            }
+            if (i == 0 && (first_t._number[i] << 1) < first_t._number[i]) {
+                first_t._number = std::move(pad(first_t._number, 1));
+                first_t._number[0] = 1;
+                first_t._number[i] = first_t._number[i] << 1;
+                first_t._current_size += 1;
+                return first_t;
+            }
         }
         return first_t;
     }
@@ -293,7 +301,7 @@ bigint bigint::operator*=(const bigint& second){
     *this = *this * second;
     return *this;
 }
-
+/*
 bigint operator/(const bigint& first, const bigint& second){
     bigint first_t = abs(first);
     bigint second_t = abs(second);
@@ -323,12 +331,12 @@ bigint operator/(const bigint& first, const bigint& second){
         return bigint(0);
     }
     signed sign = sgn(first._sign * second._sign);
-    bigint divident, quotient, remainder;
+    bigint dividend, quotient, remainder;
     for (int i = 0; i < first_t._current_size; ++i){
-        divident = divident * bigint::__base + first_t._number[i];
+        dividend = dividend * bigint::__base + first_t._number[i];
         uint lo = 0, hi = uint(-1);
         uint be = hi / 2;
-        remainder = divident - second_t * be;
+        remainder = dividend - second_t * be;
         while ((remainder < 0 || remainder >= second_t) && hi - lo != 1){
             if (remainder < 0){
                 hi = be;
@@ -337,10 +345,57 @@ bigint operator/(const bigint& first, const bigint& second){
                 lo = be;
             }
             be = lo + (hi - lo)/2;
-            remainder = divident - second_t * be;
+            remainder = dividend - second_t * be;
         }
         quotient = quotient * bigint::__base + be;
-        divident = remainder;
+        dividend = remainder;
+    }
+    quotient._sign = sign;
+    return quotient;
+}
+*/
+
+bigint operator/(const bigint& first, const bigint& second){
+    bigint dividend = abs(first);
+    bigint divisor = abs(second);
+    if (second == 2) {
+        int bit = 0;
+        for (int i = 0; i < dividend._current_size; ++i) {
+            if (i == dividend._current_size - 1) {
+                if (dividend._number[i] == 1) {
+                    dividend._number[i] = 0;
+                    dividend._sign = 0;
+                    continue;
+                }
+            }
+            dividend._number[i] = dividend._number[i] >> 1;
+            dividend._number[i] = dividend._number[i] | (bit << 31);
+            bit = dividend._number[i] & 1;
+        }
+        return dividend;
+    }
+    if (dividend < divisor || first == 0){
+        return bigint(0);
+    }
+    if (second == 0){
+        throw std::runtime_error("division by zero");
+    }
+    signed sign = sgn(first._sign * second._sign);
+    bigint quotient;
+    size_t k = 0;
+    while (divisor <= dividend && divisor > 0) {
+        divisor *= 2;
+        k++;
+    }
+    while (k-- > 0) {
+        divisor /= 2;
+        if (divisor <= dividend) {
+            dividend -= divisor;
+            quotient = (quotient * 2) + 1;
+        }
+        else {
+            quotient *= 2;
+        }
     }
     quotient._sign = sign;
     return quotient;
@@ -364,25 +419,7 @@ bigint operator%(const bigint& first, const bigint& second){
     if (first < second){
         return first;
     }
-    bigint divident, remainder;
-    for (int i = 0; i < first._current_size; ++i){
-        divident = divident * bigint::__base + first._number[i];
-        uint lo = 0, hi = uint(-1);
-        uint be = hi / 2;
-        remainder = divident - second * be;
-        while ((remainder < 0 || remainder >= second) && hi - lo != 1){
-            if (remainder < 0){
-                hi = be;
-            }
-            else {
-                lo = be;
-            }
-            be = lo + (hi - lo) / 2;
-            remainder = divident - second * be;
-        }
-        divident = remainder;
-    }
-    return std::move(remainder);
+    return first - (first / second) * second;
 }
 
 bigint bigint::operator%=(const bigint& second){
