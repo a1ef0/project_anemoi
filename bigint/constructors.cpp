@@ -14,8 +14,9 @@ bigint::bigint() {
 
 bigint::bigint(long long src) : bigint() {
     _sign = sgn(src);
-    _number[DEFAULT_SIZE - 1] = std::abs(src) & 0xffffffff;
-    _number[DEFAULT_SIZE - 2] = (std::abs(src) >> 32);
+    src = std::abs(src);
+    _number[DEFAULT_SIZE - 1] = src & 0xffffffff;
+    _number[DEFAULT_SIZE - 2] = (src >> 32);
 }
 
 bigint::bigint(const bigint& src) {

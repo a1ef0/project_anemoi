@@ -16,8 +16,8 @@ private:
     static const int DEFAULT_SIZE = 2;
     int _current_size;
     bigint(signed sign, std::vector<uint> number, int current_size);
-public:
     static constexpr size_t __base = (size_t) 1 << (_base_log + 1);
+public:
     bigint();
     bigint(long long);
     bigint(const std::string&);

@@ -403,6 +403,7 @@ bigint operator&(const bigint& first, const bigint& second) {
     for (size_t i = 0; i < n; ++i) {
         result.push_back(first_t._number[i] & second_t._number[i]);
     }
+    result = std::move(unpad(result, 2));
     return bigint(1, result, result.size());
 }
 
