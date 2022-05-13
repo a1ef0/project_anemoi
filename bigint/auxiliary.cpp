@@ -1,5 +1,6 @@
 #include "auxiliary.h"
 
+
 std::vector<uint> pad(const std::vector<uint>& src, int n) {
     std::vector<uint> dst(n, 0);
     int size = src.size();
@@ -38,4 +39,14 @@ bigint mul_mod(const bigint& first, const bigint& second, const bigint& modulo) 
         _second = _second / 2;
     }
     return x % modulo;
+}
+
+size_t number_of_bits(const bigint& number) {
+    size_t result = 0;
+    bigint _number = number;
+    while (_number > 0){
+        result++;
+        _number /= 2;
+    }
+    return result;
 }

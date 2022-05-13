@@ -37,7 +37,14 @@ public:
     friend bigint operator-(const bigint&);
     friend bigint operator+(const bigint&);
     friend bigint operator%(const bigint&, const bigint&);
-    friend bool odd(const bigint&);
+    friend bigint operator|(const bigint&, const bigint&);
+    friend bigint operator&(const bigint&, const bigint&);
+    friend bigint operator<<(const bigint&, size_t);
+    friend bigint operator>>(const bigint&, size_t);
+    bigint operator |=(const bigint&);
+    bigint operator &=(const bigint&);
+    bigint operator <<=(size_t);
+    bigint operator >>=(size_t);
     bigint operator+=(const bigint&);
     bigint operator-=(const bigint&);
     bigint operator*=(const bigint&);

@@ -248,7 +248,7 @@ void _add_carry(std::vector<uint>& number, uint carry, int idx){
  */
 bigint operator*(const bigint& first, const bigint& second){
     signed sign = sgn(first._sign * second._sign);
-    int current_size = first._current_size + second._current_size + 2;
+    size_t current_size = first._current_size + second._current_size + 2;
     std::vector<uint> result(current_size, 0);
     uint log = (bigint::_base_log + 1);
     if (first == 0 || second == 0) {
@@ -264,19 +264,24 @@ bigint operator*(const bigint& first, const bigint& second){
         uint bit = 0, _bit = 0;
         bigint first_t = first;
         for (int i = first_t._current_size - 1; i >= 0; --i) {
+            if (i == 0) {
+                _bit = (first_t._number[i] & 0x80000000) > 0;
+                if ((first_t._number[i] << 1) < first_t._number[i]) {
+                    first_t._number[i] = first_t._number[i] << 1;
+                    first_t._number[i] = first_t._number[i] | bit;
+                    first_t._number = std::move(pad(first_t._number, 1));
+                    first_t._number[0] = _bit;
+                    return first_t;
+                } else {
+                    first_t._number[i] = first_t._number[i] << 1;
+                    first_t._number[i] = first_t._number[i] | bit;
+                    return first_t;
+                }
+            }
             _bit = (first_t._number[i] & 0x80000000) > 0;
             first_t._number[i] = first_t._number[i] << 1;
-            //TODO:!!!! if (i == 1)
-            if (i != 0) {
-                first_t._number[i-1] = first_t._number[i-1] | _bit;
-            }
-            if (i == 0 && (first_t._number[i] << 1) < first_t._number[i]) {
-                first_t._number = std::move(pad(first_t._number, 1));
-                first_t._number[0] = 1;
-                first_t._number[i] = first_t._number[i] << 1;
-                first_t._current_size += 1;
-                return first_t;
-            }
+            first_t._number[i] = first_t._number[i] | bit;
+            bit = _bit;
         }
         return first_t;
     }
@@ -301,76 +306,24 @@ bigint bigint::operator*=(const bigint& second){
     *this = *this * second;
     return *this;
 }
-/*
-bigint operator/(const bigint& first, const bigint& second){
-    bigint first_t = abs(first);
-    bigint second_t = abs(second);
-    if (second == 2) {
-        int bit = 0;
-        for (int i = 0; i < first_t._current_size; ++i) {
-            if (i == first_t._current_size - 1) {
-                if (first_t._number[i] == 1) {
-                    first_t._number[i] = 0;
-                    first_t._sign = 0;
-                    continue;
-                }
-            }
-            first_t._number[i] = first_t._number[i] >> 1;
-            first_t._number[i] = first_t._number[i] | (bit << 31);
-            bit = first_t._number[i] & 1;
-        }
-        return first_t;
-    }
-    if (first == 0){
-        return bigint(0);
-    }
-    if (second == 0){
-        throw std::runtime_error("division by zero");
-    }
-    if (first_t < second_t){
-        return bigint(0);
-    }
-    signed sign = sgn(first._sign * second._sign);
-    bigint dividend, quotient, remainder;
-    for (int i = 0; i < first_t._current_size; ++i){
-        dividend = dividend * bigint::__base + first_t._number[i];
-        uint lo = 0, hi = uint(-1);
-        uint be = hi / 2;
-        remainder = dividend - second_t * be;
-        while ((remainder < 0 || remainder >= second_t) && hi - lo != 1){
-            if (remainder < 0){
-                hi = be;
-            }
-            else {
-                lo = be;
-            }
-            be = lo + (hi - lo)/2;
-            remainder = dividend - second_t * be;
-        }
-        quotient = quotient * bigint::__base + be;
-        dividend = remainder;
-    }
-    quotient._sign = sign;
-    return quotient;
-}
-*/
 
-bigint operator/(const bigint& first, const bigint& second){
+bigint operator/(const bigint& first, const bigint& second) {
     bigint dividend = abs(first);
     bigint divisor = abs(second);
     if (second == 2) {
-        int bit = 0;
+        int bit = 0, _bit = 0;
         for (int i = 0; i < dividend._current_size; ++i) {
             if (i == dividend._current_size - 1) {
-                if (dividend._number[i] == 1) {
+                if (dividend == 1) {
                     dividend._number[i] = 0;
                     dividend._sign = 0;
                     continue;
                 }
             }
+            _bit = dividend._number[i] & 1;
             dividend._number[i] = dividend._number[i] >> 1;
             dividend._number[i] = dividend._number[i] | (bit << 31);
-            bit = dividend._number[i] & 1;
+            bit = _bit;
         }
         return dividend;
     }
@@ -381,20 +334,14 @@ bigint operator/(const bigint& first, const bigint& second){
         throw std::runtime_error("division by zero");
     }
     signed sign = sgn(first._sign * second._sign);
-    bigint quotient;
-    size_t k = 0;
-    while (divisor <= dividend && divisor > 0) {
-        divisor *= 2;
-        k++;
-    }
-    while (k-- > 0) {
-        divisor /= 2;
-        if (divisor <= dividend) {
-            dividend -= divisor;
-            quotient = (quotient * 2) + 1;
-        }
-        else {
-            quotient *= 2;
+    bigint quotient, remainder;
+    size_t n = number_of_bits(first);
+    for (int i = n - 1; i >= 0; --i) {
+        remainder = remainder << 1;
+        remainder = remainder | ((dividend & (1_bi << i)) >> i);
+        if (remainder >= divisor) {
+            remainder = remainder - divisor;
+            quotient = quotient | (1_bi << i);
         }
     }
     quotient._sign = sign;
@@ -426,3 +373,72 @@ bigint bigint::operator%=(const bigint& second){
     *this = *this % second;
     return *this;
 }
+
+bigint operator|(const bigint& first, const bigint& second) {
+    std::vector<uint> result;
+    bigint first_t = first;
+    bigint second_t = second;
+    if (first_t._current_size < second_t._current_size) {
+        std::swap(first_t, second_t);
+    }
+    size_t n = first_t._current_size - second_t._current_size;
+    second_t._number = std::move(pad(second_t._number, n));
+    n = first_t._current_size;
+    for (size_t i = 0; i < n; ++i) {
+        result.push_back(first_t._number[i] | second_t._number[i]);
+    }
+    return bigint(1, result, result.size());
+}
+
+bigint operator&(const bigint& first, const bigint& second) {
+    std::vector<uint> result;
+    bigint first_t = first;
+    bigint second_t = second;
+    if (first_t._current_size < second_t._current_size) {
+        std::swap(first_t, second_t);
+    }
+    size_t n = first_t._current_size - second_t._current_size;
+    second_t._number = std::move(pad(second_t._number, n));
+    n = first_t._current_size;
+    for (size_t i = 0; i < n; ++i) {
+        result.push_back(first_t._number[i] & second_t._number[i]);
+    }
+    return bigint(1, result, result.size());
+}
+
+bigint operator<<(const bigint& number, size_t n) {
+    bigint _number = number;
+    for (size_t i = 0; i < n; ++i) {
+        _number *= 2;
+    }
+    return _number;
+}
+
+bigint operator>>(const bigint& number, size_t n) {
+    bigint _number = number;
+    for (size_t i = 0; i < n; ++i) {
+        _number /= 2;
+    }
+    return _number;
+}
+
+bigint bigint::operator |=(const bigint& second) {
+    *this = *this | second;
+    return *this;
+}
+
+bigint bigint::operator &=(const bigint& second) {
+    *this = *this & second;
+    return *this;
+}
+
+bigint bigint::operator <<=(size_t n) {
+    *this = *this << n;
+    return *this;
+}
+
+bigint bigint::operator >>=(size_t n) {
+    *this = *this >> n;
+    return *this;
+}
+//TODO: переписать на <<

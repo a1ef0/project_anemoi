@@ -5,9 +5,8 @@ using namespace std;
 using namespace biginteger;
 
 int main() {
-    bigint a = 100;
-    for (int i = 1; i < 100; ++i){
-        cout << a % i << " = " << a << " - (" << a / i << " * " << i << ')' << endl;
+    for (int i = 2; i < 100; ++i) {
+        cout << i << ' ' << is_prime(i, 50) << '\n';
     }
     return 0;
 }
