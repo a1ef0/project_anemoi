@@ -6,7 +6,7 @@
 bigint biginteger::gcd(const bigint& a, const bigint& b) {
     bigint _a = a;
     bigint _b = b;
-    while (_a != 0 && _b != 0){
+    while (_a != bigint::zero && _b != bigint::zero){
         if (_a > _b){
             _a = _a % _b;
         }
@@ -18,15 +18,15 @@ bigint biginteger::gcd(const bigint& a, const bigint& b) {
 }
 
 bigint biginteger::pow(const bigint& base, const bigint& exp) {
-    bigint result = 1;
+    bigint result = bigint::two;
     bigint _base = base;
     bigint _exp = exp;
-    while (_exp > 0){
-        if (_exp % 2 == 1){
+    while (_exp > bigint::zero){
+        if (_exp % bigint::two == bigint::one){
             result *= _base;
         }
         _base *= _base;
-        _exp /= 2;
+        _exp /= bigint::two;
     }
     return result;
 }
@@ -34,43 +34,43 @@ bigint biginteger::pow(const bigint& base, const bigint& exp) {
 
 
 bigint biginteger::pow(const bigint& base, const bigint& exp, const bigint& mod) {
-    bigint result = 1;
+    bigint result = bigint::one;
     bigint _base = base;
     bigint _exp = exp;
-    if (base < 0){
+    if (base < bigint::zero){
         throw std::runtime_error("cannot pow negative number");
     }
-    if (exp < 0){
+    if (exp < bigint::zero){
         _exp = _exp + base * (abs(_exp) / base);
     }
     if (exp == -1){
-        _exp = mod - 2;
+        _exp = mod - bigint::two;
     }
-    while (_exp > 0){
-        if (_exp % 2 == 1){
+    while (_exp > bigint::zero){
+        if (_exp % bigint::two == bigint::one){
             result = std::move(mul_mod(result, _base, mod));
         }
         _base = std::move(mul_mod(_base, _base, mod));
-        _exp /= 2;
+        _exp /= bigint::two;
     }
     return result % mod;
 }
 
 inline bool biginteger::miller_rabin(const bigint& d, const bigint& n, size_t bits) {
     bigint _d = d;
-    bigint a = 2 + biginteger::random(bits) % (n - 4);
+    bigint a = bigint::two + biginteger::random(bits) % (n - 4);
     bigint x = std::move(pow(a, d, n));
-    if (x == 1 || x == n - 1) {
+    if (x == bigint::one || x == n - bigint::one) {
         return true;
     }
 
-    while (_d != n - 1) {
+    while (_d != n - bigint::one) {
         x = std::move(mul_mod(x, x, n));
-        _d = _d * 2;
-        if (x == 1) {
+        _d = _d * bigint::two;
+        if (x == bigint::one) {
             return false;
         }
-        if (x == n - 1) {
+        if (x == n - bigint::one) {
             return true;
         }
     }
@@ -79,23 +79,23 @@ inline bool biginteger::miller_rabin(const bigint& d, const bigint& n, size_t bi
 }
 
 bigint biginteger::factorial(const bigint& n) {
-    bigint res = 1;
-    for (bigint i = 1; i <= n; ++i){
+    bigint res = bigint::one;
+    for (bigint i = bigint::one; i <= n; ++i){
         res *= i;
     }
     return res;
 }
 
 bool biginteger::is_prime(const bigint& number, size_t k, size_t bits) {
-    if (number <= 1 || number == 4) {
+    if (number <= bigint::one || number == 4) {
         return false;
     }
-    if (number == 2 || number == 3) {
+    if (number == bigint::two || number == 3) {
         return true;
     }
-    bigint d = number - 1;
-    while (d % 2 == 0) {
-        d /= 2;
+    bigint d = number - bigint::one;
+    while (d % bigint::two == bigint::zero) {
+        d /= bigint::two;
     }
 
     for (int i = 0; i < k; ++i) {
@@ -133,9 +133,7 @@ bigint biginteger::random() {
 
 bigint biginteger::get_prime(size_t bits) {
     bigint result = biginteger::random(bits);
-//    result += (result % 2 == 0);
     while (!is_prime(result, 50, bits)) {
-//        result += 2;
         result = biginteger::random(bits);
     }
     return result;

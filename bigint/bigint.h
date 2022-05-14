@@ -18,6 +18,9 @@ private:
     bigint(signed sign, std::vector<uint> number, int current_size);
     static constexpr size_t __base = (size_t) 1 << (_base_log + 1);
 public:
+    static bigint zero;
+    static bigint one;
+    static bigint two;
     bigint();
     bigint(long long);
     bigint(const std::string&);

@@ -1,5 +1,9 @@
 #include "auxiliary.h"
 
+bigint bigint::zero = bigint(0);
+bigint bigint::one = bigint(1);
+bigint bigint::two = bigint(2);
+
 bigint::bigint(signed sign, std::vector<uint> number, int current_size) {
     _sign = sign;
     _number = number;

@@ -28,7 +28,7 @@ std::vector<uint> unpad(const std::vector<uint>& src, int min_size) {
 }
 
 bigint mul_mod(const bigint& first, const bigint& second, const bigint& modulo) {
-    bigint x = 0;
+    bigint x = bigint::zero;
     bigint y = first % modulo;
     bigint _second = second;
     while (_second > 0) {

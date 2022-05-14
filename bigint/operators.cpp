@@ -13,8 +13,8 @@ std::ostream& operator <<(std::ostream& output, const bigint& src) {
     }
     std::string result;
     bigint _src = src;
-    while (_src != 0) {
-        result = char((_src % 10)._number[bigint::DEFAULT_SIZE -1] + 48) + result;
+    while (_src != bigint::zero) {
+        result = char((_src % 10)._number[bigint::DEFAULT_SIZE - 1] + 48) + result;
         _src /= 10;
     }
     output << result;
@@ -119,10 +119,10 @@ bigint operator+(const bigint& first, const bigint& second) {
     int current_size = std::max(first._current_size, second._current_size);
     std::vector<uint> result;
 
-    if (first == 0){
+    if (first == bigint::zero){
         return second;
     }
-    else if (second == 0){
+    else if (second == bigint::zero){
         return first;
     }
 
@@ -137,13 +137,13 @@ bigint operator+(const bigint& first, const bigint& second) {
                              pad(second._number, pad_second),
                              first._current_size);
 
-    if (first_t > 0 && second_t > 0){
+    if (first_t > bigint::zero && second_t > bigint::zero){
         result = std::move(_add(first_t._number, second_t._number, current_size));
         return bigint(1, result, current_size);
     }
-    if (first_t > 0 && second_t < 0){
+    if (first_t > bigint::zero && second_t < bigint::zero){
         if (abs(first_t) == abs(second_t)){
-            return bigint(0);
+            return bigint::zero;
         }
         if (abs(first_t) > abs(second_t)){
             result = std::move(_sub(first_t._number, second_t._number, current_size, bigint::DEFAULT_SIZE));
@@ -154,9 +154,9 @@ bigint operator+(const bigint& first, const bigint& second) {
             return bigint(-1, result, current_size);
         }
     }
-    if (first_t < 0 && second_t > 0){
+    if (first_t < bigint::zero && second_t > bigint::zero){
         if (abs(first_t) == abs(second_t)){
-            return bigint(0);
+            return bigint::zero;
         }
         if (abs(first_t) > abs(second_t)){
             result = std::move(_sub(first_t._number, second_t._number, current_size, bigint::DEFAULT_SIZE));
