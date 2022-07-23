@@ -1,28 +1,30 @@
 #include "auxiliary.h"
 
 
-std::vector<uint> pad(const std::vector<uint>& src, int n) {
-    std::vector<uint> dst(n, 0);
-    int size = src.size();
+anemoi::vec<uint> pad(const anemoi::vec<uint>& src, int n) {
+    anemoi::vec<uint> dst(n);
+    int size = src.size;
     for (int i = 0; i < size; ++i){
-        dst.push_back(src[i]);
+        dst[i] = src[i];
+        //dst.push_back(src[i]);
     }
 
     return dst;
 }
 
-std::vector<uint> unpad(const std::vector<uint>& src, int min_size) {
-    int current_size = src.size();
+anemoi::vec<uint> unpad(const anemoi::vec<uint>& src, int min_size) {
+    int current_size = src.size;
     int first_nonzero = 0;
-    std::vector<uint> dst;
     for (int i = 0; i < current_size - min_size; ++i){
         if (src[i] == 0){
             first_nonzero = i + 1;
         }
         else break;
     }
+    anemoi::vec<uint> dst(current_size - first_nonzero);
     for (int i = first_nonzero; i < current_size; ++i){
-        dst.push_back(src[i]);
+        dst[i] = src[i];
+        //dst.push_back(src[i]);
     }
     return dst;
 }

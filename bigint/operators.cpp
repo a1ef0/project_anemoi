@@ -79,8 +79,8 @@ bigint operator+(const bigint& first) {
     return first;
 }
 
-inline std::vector<uint> _add(const std::vector<uint>& first, const std::vector<uint>& second, int& current_size) {
-    std::vector<uint> result(current_size);
+inline anemoi::vec<uint> _add(const anemoi::vec<uint>& first, const anemoi::vec<uint>& second, int& current_size) {
+    anemoi::vec<uint> result(current_size);
     uint tmp = 0;
     size_t tmp_t = 0, carry = 0;
     for (int i = current_size - 1; i >= 0; --i){
@@ -97,9 +97,9 @@ inline std::vector<uint> _add(const std::vector<uint>& first, const std::vector<
     return result;
 }
 
-std::vector<uint> _sub(const std::vector<uint>& first, const std::vector<uint>& second, int& current_size, int min_size) {
-    std::vector<uint> result(current_size);
-    std::vector<uint> first_t = first;
+anemoi::vec<uint> _sub(const anemoi::vec<uint>& first, const anemoi::vec<uint>& second, int& current_size, int min_size) {
+    anemoi::vec<uint> result(current_size);
+    anemoi::vec<uint> first_t = first;
 
     for (int i = current_size - 1; i > 0; --i){
         if (first_t[i] >= second[i]){
@@ -111,13 +111,13 @@ std::vector<uint> _sub(const std::vector<uint>& first, const std::vector<uint>& 
         }
     }
     result = std::move(unpad(result, min_size));
-    current_size = result.size();
+    current_size = result.size;
     return result;
 }
 
 bigint operator+(const bigint& first, const bigint& second) {
     int current_size = std::max(first._current_size, second._current_size);
-    std::vector<uint> result;
+    anemoi::vec<uint> result;
 
     if (first == bigint::zero){
         return second;
@@ -226,7 +226,7 @@ bigint bigint::operator-=(const bigint& term){
     return *this;
 }
 
-void _add_carry(std::vector<uint>& number, uint carry, int idx){
+void _add_carry(anemoi::vec<uint>& number, uint carry, int idx){
     uint tmp = 0;
     size_t tmp_t = 0;
     for (int i = idx; i > 0; --i){
@@ -240,7 +240,7 @@ void _add_carry(std::vector<uint>& number, uint carry, int idx){
         number[0] = carry;
     }
 }
-//TODO: all int -> size_t
+
 /*
  * For now, let it keep as it is. For cryptographic purposes, we do not use any
  * huge numbers (1e500 and bigger), I geuss. If I have any performance issues, I will
@@ -249,7 +249,7 @@ void _add_carry(std::vector<uint>& number, uint carry, int idx){
 bigint operator*(const bigint& first, const bigint& second){
     signed sign = sgn(first._sign * second._sign);
     size_t current_size = first._current_size + second._current_size + 2;
-    std::vector<uint> result(current_size, 0);
+    anemoi::vec<uint> result(current_size);
     uint log = (bigint::_base_log + 1);
     if (first == 0 || second == 0) {
         return 0;
@@ -299,7 +299,7 @@ bigint operator*(const bigint& first, const bigint& second){
         }
     }
     result = std::move(unpad(result, bigint::DEFAULT_SIZE));
-    return bigint(sign, result, result.size());
+    return bigint(sign, result, result.size);
 }
 
 bigint bigint::operator*=(const bigint& second){
@@ -338,10 +338,10 @@ bigint operator/(const bigint& first, const bigint& second) {
     size_t n = number_of_bits(first);
     for (int i = n - 1; i >= 0; --i) {
         remainder = remainder << 1;
-        remainder = remainder | ((dividend & (1_bi << i)) >> i);
+        remainder = remainder | ((dividend & (bigint::one << i)) >> i);
         if (remainder >= divisor) {
             remainder = remainder - divisor;
-            quotient = quotient | (1_bi << i);
+            quotient = quotient | (bigint::one << i);
         }
     }
     quotient._sign = sign;
@@ -375,23 +375,23 @@ bigint bigint::operator%=(const bigint& second){
 }
 
 bigint operator|(const bigint& first, const bigint& second) {
-    std::vector<uint> result;
     bigint first_t = first;
     bigint second_t = second;
+
+    size_t n = first_t._current_size - second_t._current_size;
+    anemoi::vec<uint> result(n);
     if (first_t._current_size < second_t._current_size) {
         std::swap(first_t, second_t);
     }
-    size_t n = first_t._current_size - second_t._current_size;
     second_t._number = std::move(pad(second_t._number, n));
-    n = first_t._current_size;
     for (size_t i = 0; i < n; ++i) {
-        result.push_back(first_t._number[i] | second_t._number[i]);
+        result[i] = (first_t._number[i] | second_t._number[i]);
+        //result.push_back(first_t._number[i] | second_t._number[i]);
     }
-    return bigint(1, result, result.size());
+    return bigint(1, result, result.size);
 }
 
 bigint operator&(const bigint& first, const bigint& second) {
-    std::vector<uint> result;
     bigint first_t = first;
     bigint second_t = second;
     if (first_t._current_size < second_t._current_size) {
@@ -400,11 +400,13 @@ bigint operator&(const bigint& first, const bigint& second) {
     size_t n = first_t._current_size - second_t._current_size;
     second_t._number = std::move(pad(second_t._number, n));
     n = first_t._current_size;
+    anemoi::vec<uint> result(n);
     for (size_t i = 0; i < n; ++i) {
-        result.push_back(first_t._number[i] & second_t._number[i]);
+        result[i] = first_t._number[i] & second_t._number[i];
+        //result.push_back(first_t._number[i] & second_t._number[i]);
     }
     result = std::move(unpad(result, 2));
-    return bigint(1, result, result.size());
+    return bigint(1, result, result.size);
 }
 
 bigint operator<<(const bigint& number, size_t n) {
@@ -442,4 +444,3 @@ bigint bigint::operator >>=(size_t n) {
     *this = *this >> n;
     return *this;
 }
-//TODO: переписать на <<

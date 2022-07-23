@@ -4,7 +4,7 @@ bigint bigint::zero = bigint(0);
 bigint bigint::one = bigint(1);
 bigint bigint::two = bigint(2);
 
-bigint::bigint(signed sign, std::vector<uint> number, int current_size) {
+bigint::bigint(signed sign, anemoi::vec<uint> number, int current_size) {
     _sign = sign;
     _number = number;
     _current_size = current_size;
@@ -12,7 +12,7 @@ bigint::bigint(signed sign, std::vector<uint> number, int current_size) {
 
 bigint::bigint() {
     _sign = 0;
-    _number = std::vector<uint>(DEFAULT_SIZE, 0);
+    _number = anemoi::vec<uint>(DEFAULT_SIZE);
     _current_size = DEFAULT_SIZE;
 }
 

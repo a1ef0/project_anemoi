@@ -17,6 +17,7 @@ include_directories(
 )
 
 set (SRCS
+    bigint/vec.h
     bigint/auxiliary.cpp
     bigint/auxiliary.h
     bigint/bigint.h
