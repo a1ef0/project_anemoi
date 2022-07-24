@@ -19,6 +19,7 @@ public:
     static bigint zero;
     static bigint one;
     static bigint two;
+    static bigint ten;
     bigint();
     bigint(long long);
     bigint(const std::string&);

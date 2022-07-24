@@ -3,6 +3,7 @@
 bigint bigint::zero = bigint(0);
 bigint bigint::one = bigint(1);
 bigint bigint::two = bigint(2);
+bigint bigint::ten = bigint(10);
 
 bigint::bigint(signed sign, anemoi::vec<uint> number, int current_size) {
     _sign = sign;
