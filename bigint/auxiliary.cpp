@@ -2,11 +2,10 @@
 
 
 anemoi::vec<uint> pad(const anemoi::vec<uint>& src, int n) {
-    anemoi::vec<uint> dst(n);
     int size = src.size;
-    for (int i = 0; i < size; ++i){
+    anemoi::vec<uint> dst(n + size);
+    for (int i = n; i < size; ++i){
         dst[i] = src[i];
-        //dst.push_back(src[i]);
     }
 
     return dst;
@@ -22,9 +21,8 @@ anemoi::vec<uint> unpad(const anemoi::vec<uint>& src, int min_size) {
         else break;
     }
     anemoi::vec<uint> dst(current_size - first_nonzero);
-    for (int i = first_nonzero; i < current_size; ++i){
-        dst[i] = src[i];
-        //dst.push_back(src[i]);
+    for (int i = 0; i < current_size - first_nonzero; ++i){
+        dst[i] = src[first_nonzero + i];
     }
     return dst;
 }

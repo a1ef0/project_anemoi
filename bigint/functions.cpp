@@ -59,7 +59,7 @@ bigint biginteger::pow(const bigint& base, const bigint& exp, const bigint& mod)
 inline bool biginteger::miller_rabin(const bigint& d, const bigint& n, size_t bits) {
     bigint _d = d;
     bigint a = bigint::two + biginteger::random(bits) % (n - 4);
-    bigint x = std::move(pow(a, d, n));
+    bigint x = pow(a, d, n);
     if (x == bigint::one || x == n - bigint::one) {
         return true;
     }
@@ -98,7 +98,7 @@ bool biginteger::is_prime(const bigint& number, size_t k, size_t bits) {
         d /= bigint::two;
     }
 
-    for (int i = 0; i < k; ++i) {
+    for (size_t i = 0; i < k; ++i) {
         if (!miller_rabin(d, number, bits)){
             return false;
         }
@@ -110,7 +110,6 @@ bool biginteger::is_prime(const bigint& number, size_t k) {
     return is_prime(number, k, 32);
 }
 
-//TODO: somehow remove dependency on 32, but probably it will not be needed
 bigint biginteger::random(size_t bits) {
     bigint result;
     std::random_device engine;

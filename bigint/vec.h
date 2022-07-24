@@ -18,8 +18,8 @@ public:
 
     vec(){
         size = DEFAULT_SIZE;
-        _container = new T[DEFAULT_SIZE];
-        _container = (T*)(malloc(DEFAULT_SIZE * sizeof(T)));
+        //_container = new T[DEFAULT_SIZE];
+        _container = (T*)calloc(DEFAULT_SIZE, sizeof(T));
     }
 
     ~vec(){
@@ -29,7 +29,8 @@ public:
 
     vec(uint size) {
         this->size = size;
-        _container = new T[size];
+        //_container = new T[size];
+        _container = (T*)calloc(size, sizeof(T));
     }
 
     vec(const vec& src){
@@ -55,13 +56,18 @@ public:
     }
 
     vec& operator =(const vec& src){
-        //*this = vec(src);
-        this->size = src.size;
-        this->_container = new T[size];
-        //vec *ptr = (vec *)malloc(sizeof(vec *) + DEFAULT_SIZE * sizeof(int));
+        size = src.size;
+        _container = new T[size];
         for (size_t i = 0; i < size; ++i){
             _container[i] = src._container[i];
         }
+        return *this;
+    }
+
+    vec& operator =(vec&& src){
+        size = src.size;
+        _container = src._container;
+        src._container = nullptr;
         return *this;
     }
 private:
