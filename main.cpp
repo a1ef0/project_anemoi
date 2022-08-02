@@ -8,6 +8,7 @@ using namespace cln;
 
 int main() {
     cl_I a = 2;
-    cout << anemoi::pow<cl_I>(a, 1000000) << endl;
+    auto ans = anemoi::pow<cl_I>(11, -1, 13);
+    cout << ans << endl;
     return 0;
 }
