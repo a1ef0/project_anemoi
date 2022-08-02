@@ -1,16 +1,15 @@
-#include <iostream>
-#include "bigint/bigint.h"
-#include "bigint/functions.h"
+#include <cln/io.h>
+#include <cln/integer_io.h>
 
-using namespace biginteger;
+#include "helper_functions.h"
 
 using namespace std;
+using namespace cln;
 
 int main() {
-
-    for (int i = 2; i < 100; ++i) {
-        cout << i << ' ' << is_prime(i, 100) << '\n';
-    }
-
+    cl_I a = 2;
+    auto ans = anemoi::pow(11, -1, 13);
+    cout << ans << endl;
+    cout << anemoi::ord(9704, 17389, anemoi::slow_factorize) << endl;
     return 0;
 }

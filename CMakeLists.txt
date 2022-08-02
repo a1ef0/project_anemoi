@@ -10,24 +10,15 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -O3")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -O3 -lcln")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -lcln")
 
-include_directories(
-    bigint
-)
 
 set (SRCS
-    bigint/vec.h
-    bigint/auxiliary.cpp
-    bigint/auxiliary.h
-    bigint/bigint.h
-    bigint/constructors.cpp
-    bigint/functions.cpp
-    bigint/functions.h
-    bigint/operators.cpp
+    helper_functions.h
     main.cpp
 )
 
-
+# target_link_libraries(${CMAKE_PROJECT_NAME} -lgmpxx -lgmp)
 add_executable(${CMAKE_PROJECT_NAME} ${SRCS})
 
