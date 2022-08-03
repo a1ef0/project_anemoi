@@ -15,7 +15,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -lcln")
 
 
 set (SRCS
-    helper_functions.h
+    basic_functions.h
+    basic_functions.cpp
     main.cpp
 )
 
