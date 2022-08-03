@@ -55,6 +55,14 @@ cln::cl_I ord(cln::cl_I element, cln::cl_I mod, std::set<cln::cl_I>(*factorize)(
  */
 cln::cl_I shanks_babystep_giantstep(cln::cl_I g, cln::cl_I h, cln::cl_I p);
 
+/**
+ * @brief solve_crt     - solves The Chinese Remainder Theorem with given std::vector of congruents & modulos
+ * @param congruents    - congruents for which we need to find solution
+ * @param modulos       - pairwise relative coprime modulus inputs
+ * @param size          - size of input std::vector
+ * @return integer solution to CRT
+ */
+cln::cl_I solve_crt(std::vector<cln::cl_I>& congruents, std::vector<cln::cl_I>& modulos, size_t size);
 }
 
 #endif // BASIC_FUNCTIONS_H
